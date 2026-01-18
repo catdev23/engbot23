@@ -2,7 +2,6 @@ import os
 from fastapi import FastAPI, Request
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import CallbackQuery
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from engl import MATERIALS, AI_TOOLS, PROMPTS_PDF_URL, level_keyboard, main_menu_keyboard
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -11,8 +10,7 @@ dp = Dispatcher()
 
 app = FastAPI()
 
-# --- Хэндлеры ---
-
+# --- Handlers ---
 @dp.message(commands=["start"])
 async def start(message: types.Message):
     await message.answer(
@@ -26,11 +24,8 @@ async def callbacks(query: CallbackQuery):
 
     if data.startswith("level_"):
         level = data.replace("level_", "")
-        await query.message.answer(MATERIALS.get(level, "Нет материалов для этого уровня"))
-        await query.message.answer(
-            "Чем сегодня могу помочь? ✨",
-            reply_markup=main_menu_keyboard()
-        )
+        await query.message.answer(MATERIALS.get(level, "Нет материалов"))
+        await query.message.answer("Чем сегодня могу помочь? ✨", reply_markup=main_menu_keyboard())
         await query.answer()
 
     elif data == "show_ai_tools":
@@ -48,11 +43,6 @@ async def callbacks(query: CallbackQuery):
         await query.answer()
 
 # --- FastAPI Webhook ---
-@app.on_event("startup")
-async def startup_event():
-    # Dispatcher инициализация не нужна, просто создаём Bot
-    pass
-
 @app.post("/")
 async def telegram_webhook(request: Request):
     data = await request.json()
