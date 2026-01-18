@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, Request
 from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
 from aiogram.types import CallbackQuery
 from engl import MATERIALS, AI_TOOLS, PROMPTS_PDF_URL, level_keyboard, main_menu_keyboard
 
