@@ -63,7 +63,7 @@ async def telegram_webhook(request: Request):
     """Обрабатывает POST запрос от Telegram webhook"""
     data = await request.json()
     update = types.Update(**data)
-    await dp.update.dispatch(update)  # <-- aiogram v3
+    await dp.feed_update(update)
     return {"ok": True}
 
 # --- Health check ---
