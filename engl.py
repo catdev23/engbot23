@@ -1,5 +1,5 @@
-import logging
 import os
+import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
@@ -168,7 +168,7 @@ async def show_ai_tools(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     # Замените 'Промпты.pdf' на путь к вашему файлу
     try:
         await query.message.reply_document(
-            document='C:/Users/milky/Desktop/engl/PROMT.pdf',
+            document='Промпты.pdf',
             caption='📄 Лучшие промпты для изучения английского с ИИ'
         )
     except Exception as e:
@@ -222,7 +222,9 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main() -> None:
     """Запуск бота"""
-    TOKEN = os.getenv("BOT_TOKEN")
+    # Замените 'YOUR_BOT_TOKEN' на токен вашего бота от @BotFather
+    TOKEN = os.getenv('BOT_TOKEN')
+    
     # Создание приложения
     application = Application.builder().token(TOKEN).build()
     
