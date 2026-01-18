@@ -1,4 +1,5 @@
 import logging
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
@@ -221,9 +222,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main() -> None:
     """Запуск бота"""
-    # Замените 'YOUR_BOT_TOKEN' на токен вашего бота от @BotFather
-    TOKEN = '8313872910:AAG4cTiJBObHScvMngsiIF_LZ7s0N9Q3oWk'
-    
+    TOKEN = os.getenv('8313872910:AAG4cTiJBObHScvMngsiIF_LZ7s0N9Q3oWk')
     # Создание приложения
     application = Application.builder().token(TOKEN).build()
     
