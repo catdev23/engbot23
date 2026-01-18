@@ -12,7 +12,7 @@ dp = Dispatcher()
 app = FastAPI()
 
 # --- Handlers ---
-@dp.message(commands=["start"])
+@dp.message(Command("start"))
 async def start(message: types.Message):
     await message.answer(
         "👋 Привет! Выберите ваш уровень английского:",
