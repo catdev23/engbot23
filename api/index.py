@@ -4,12 +4,11 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 from engl import start, level_selected, show_ai_tools, change_level, main_menu
 
-TOKEN = os.environ["BOT_TOKEN"]  # задать в Render -> Environment Variables
-
+TOKEN = os.environ["BOT_TOKEN"]
 app = FastAPI()
 application = Application.builder().token(TOKEN).build()
 
-# Регистрируем обработчики
+# Handlers
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CallbackQueryHandler(level_selected, pattern="^level_"))
 application.add_handler(CallbackQueryHandler(show_ai_tools, pattern="^show_ai_tools$"))
@@ -18,7 +17,7 @@ application.add_handler(CallbackQueryHandler(main_menu, pattern="^main_menu$"))
 
 @app.on_event("startup")
 async def startup():
-    await application.initialize()  # важно для webhook режима
+    await application.initialize()
 
 @app.post("/")
 async def webhook(request: Request):
