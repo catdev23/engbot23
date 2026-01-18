@@ -7,7 +7,7 @@ from engl import MATERIALS, AI_TOOLS, PROMPTS_PDF_URL, level_keyboard, main_menu
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(bot=bot)  # <-- здесь добавлено bot
 
 app = FastAPI()
 
