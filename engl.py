@@ -1,7 +1,6 @@
-import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import ContextTypes
 
 # Настройка логирования
 logging.basicConfig(
@@ -100,144 +99,78 @@ AI_TOOLS = """🤖 Нейросети для изучения английско
 • YouGlish - разные акценты и скорость речи
 • PlayPhrase.me - произношение в контексте
 
-⚠️ Важно помнить, что эффективное использование ИИ начинается с качественных промптов (запросов или инструкций для нейросети)! 🌟"""
+⚠️ Эффективное использование ИИ начинается с качественных промптов! 🌟"""
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Приветственное сообщение при старте бота"""
+PROMPTS_PDF_URL = "https://github.com/catthecat3/engbot18/blob/main/PROMT.pdf"
+
+# --- HANDLERS ---
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     first_name = user.first_name if user.first_name else "друг"
-    
+
     welcome_text = f"""👋 Привет, {first_name}!
 
-Добро пожаловать в English with AI - твоего персонального помощника в изучении английского языка с помощью искусственного интеллекта!
+Добро пожаловать в English with AI — твоего персонального помощника в изучении английского языка с помощью ИИ!
 
-Для начала мне необходимо узнать твой уровень владения английским языком 🌟
+Выберите ваш уровень:"""
 
-Расскажи, пожалуйста, какой у тебя сейчас уровень английского?
-
-Если сомневаешься, советую пройти тест на определение уровня:
-https://www.cambridgeenglish.org/test-your-english/"""
-    
     keyboard = [
         [InlineKeyboardButton("🐣 Начинающий (A1-A2)", callback_data='level_beginner')],
         [InlineKeyboardButton("🌱 Средний (B1-B2)", callback_data='level_intermediate')],
         [InlineKeyboardButton("🌳 Продвинутый (C1-C2)", callback_data='level_advanced')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    
     await update.message.reply_text(welcome_text, reply_markup=reply_markup)
 
-async def level_selected(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Обработка выбора уровня языка"""
+
+async def level_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    
     level = query.data.replace('level_', '')
-    
-    # Отправляем материалы для выбранного уровня
     await query.message.reply_text(MATERIALS[level])
-    
-    # Предлагаем дополнительные опции
+
     keyboard = [
         [InlineKeyboardButton("🤖 Нейросети для изучения", callback_data='show_ai_tools')],
         [InlineKeyboardButton("🔄 Изменить уровень", callback_data='change_level')],
         [InlineKeyboardButton("ℹ️ Главное меню", callback_data='main_menu')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.reply_text(
-        "Чем сегодня могу помочь? ✨",
-        reply_markup=reply_markup
-    )
+    await query.message.reply_text("Чем сегодня могу помочь? ✨", reply_markup=reply_markup)
 
-async def show_ai_tools(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Показать нейросети для изучения английского"""
+
+async def show_ai_tools(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    
     await query.message.reply_text(AI_TOOLS)
-    
-    # Отправляем сообщение о промптах
-    prompts_text = """Важно помнить, что эффективное использование ИИ начинается с качественных промптов (это запрос, команда или набор инструкций, которые пользователь передаёт нейросети для выполнения определённой задачи) 🌟
+    await query.message.reply_text(f"📄 Скачать промпты: {PROMPTS_PDF_URL}")
 
-👩‍🎓 Из-за этого мы добавили файл с лучшими промптами для работы с ИИ (для каждой сферы изучения английского языка)"""
-    
-    await query.message.reply_text(prompts_text)
-    
-    # Отправляем файл с промптами
-    # Замените 'Промпты.pdf' на путь к вашему файлу
-    try:
-        await query.message.reply_document(
-            document='Промпты.pdf',
-            caption='📄 Лучшие промпты для изучения английского с ИИ'
-        )
-    except Exception as e:
-        logger.error(f"Ошибка при отправке файла: {e}")
-        await query.message.reply_text(
-            "⚠️ К сожалению, не удалось отправить файл. Обратитесь к администратору."
-        )
-    
     keyboard = [
         [InlineKeyboardButton("🔙 Назад", callback_data='main_menu')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.reply_text(
-        "Возвращайтесь в главное меню:",
-        reply_markup=reply_markup
-    )
+    await query.message.reply_text("Возвращайтесь в главное меню:", reply_markup=reply_markup)
 
-async def change_level(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Изменить уровень языка"""
+
+async def change_level(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    
+
     keyboard = [
         [InlineKeyboardButton("🐣 Начинающий (A1-A2)", callback_data='level_beginner')],
         [InlineKeyboardButton("🌱 Средний (B1-B2)", callback_data='level_intermediate')],
         [InlineKeyboardButton("🌳 Продвинутый (C1-C2)", callback_data='level_advanced')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.reply_text(
-        "Выберите ваш уровень английского:",
-        reply_markup=reply_markup
-    )
+    await query.message.reply_text("Выберите ваш уровень английского:", reply_markup=reply_markup)
 
-async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Главное меню"""
+
+async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    
+
     keyboard = [
         [InlineKeyboardButton("📚 Подобрать материалы", callback_data='change_level')],
         [InlineKeyboardButton("🤖 Нейросети для изучения", callback_data='show_ai_tools')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.reply_text(
-        "Чем сегодня могу помочь? ✨",
-        reply_markup=reply_markup
-    )
-
-def main() -> None:
-    """Запуск бота"""
-    # Замените 'YOUR_BOT_TOKEN' на токен вашего бота от @BotFather
-    TOKEN = os.getenv('BOT_TOKEN')
-    
-    # Создание приложения
-    application = Application.builder().token(TOKEN).build()
-    
-    # Регистрация обработчиков
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(level_selected, pattern='^level_'))
-    application.add_handler(CallbackQueryHandler(show_ai_tools, pattern='^show_ai_tools$'))
-    application.add_handler(CallbackQueryHandler(change_level, pattern='^change_level$'))
-    application.add_handler(CallbackQueryHandler(main_menu, pattern='^main_menu$'))
-    
-    # Запуск бота
-    logger.info("Бот запущен!")
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-
-if __name__ == '__main__':
-    main()
+    await query.message.reply_text("Чем сегодня могу помочь? ✨", reply_markup=reply_markup)
