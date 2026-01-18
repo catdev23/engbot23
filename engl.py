@@ -1,7 +1,5 @@
-from aiogram import types
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-# Материалы
 MATERIALS = {
     'beginner': "Материалы для начинающего...",
     'intermediate': "Материалы для среднего...",
@@ -11,7 +9,6 @@ MATERIALS = {
 AI_TOOLS = "🤖 Нейросети для изучения английского языка..."
 PROMPTS_PDF_URL = "https://github.com/catthecat3/engbot18/blob/main/PROMT.pdf"
 
-# Кнопки для выбора уровня
 def level_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("🐣 Начинающий (A1-A2)", callback_data="level_beginner")],
@@ -20,7 +17,6 @@ def level_keyboard():
     ])
     return keyboard
 
-# Главное меню
 def main_menu_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("📚 Подобрать материалы", callback_data="change_level")],
