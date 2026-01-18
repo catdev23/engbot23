@@ -222,7 +222,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main() -> None:
     """Запуск бота"""
-    TOKEN = os.getenv('8313872910:AAG4cTiJBObHScvMngsiIF_LZ7s0N9Q3oWk')
+    TOKEN = os.getenv("BOT_TOKEN")
     # Создание приложения
     application = Application.builder().token(TOKEN).build()
     
