@@ -2,29 +2,24 @@ import os
 from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
-
 from engl import start, level_selected, show_ai_tools, change_level, main_menu
 
-TOKEN = os.environ["BOT_TOKEN"]  # Должна быть переменная окружения на Render
+TOKEN = os.environ["BOT_TOKEN"]  # задать в Render -> Environment Variables
 
 app = FastAPI()
-
-# Создаём Application без polling
 application = Application.builder().token(TOKEN).build()
 
-# Регистрируем handlers
+# Регистрируем обработчики
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CallbackQueryHandler(level_selected, pattern="^level_"))
 application.add_handler(CallbackQueryHandler(show_ai_tools, pattern="^show_ai_tools$"))
 application.add_handler(CallbackQueryHandler(change_level, pattern="^change_level$"))
 application.add_handler(CallbackQueryHandler(main_menu, pattern="^main_menu$"))
 
-# Инициализация Application при старте FastAPI
 @app.on_event("startup")
 async def startup():
-    await application.initialize()
+    await application.initialize()  # важно для webhook режима
 
-# POST endpoint для Telegram webhook
 @app.post("/")
 async def webhook(request: Request):
     data = await request.json()
@@ -32,7 +27,6 @@ async def webhook(request: Request):
     await application.process_update(update)
     return {"ok": True}
 
-# GET для проверки
 @app.get("/")
 async def health():
-    return {"status": "bot alive"}
+    return {"status":"bot alive"}
