@@ -1,4 +1,3 @@
-import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
@@ -9,6 +8,9 @@ logging.basicConfig(
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+# ВСТАВЬТЕ ВАШ ТОКЕН СЮДА
+TOKEN = 'ВСТАВЬТЕ_ВАШ_ТОКЕН_СЮДА'
 
 # Материалы по уровням
 MATERIALS = {
@@ -134,10 +136,8 @@ async def level_selected(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     
     level = query.data.replace('level_', '')
     
-    # Отправляем материалы для выбранного уровня
     await query.message.reply_text(MATERIALS[level])
     
-    # Предлагаем дополнительные опции
     keyboard = [
         [InlineKeyboardButton("🤖 Нейросети для изучения", callback_data='show_ai_tools')],
         [InlineKeyboardButton("🔄 Изменить уровень", callback_data='change_level')],
@@ -157,18 +157,16 @@ async def show_ai_tools(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     
     await query.message.reply_text(AI_TOOLS)
     
-    # Отправляем сообщение о промптах
     prompts_text = """Важно помнить, что эффективное использование ИИ начинается с качественных промптов (это запрос, команда или набор инструкций, которые пользователь передаёт нейросети для выполнения определённой задачи) 🌟
 
 👩‍🎓 Из-за этого мы добавили файл с лучшими промптами для работы с ИИ (для каждой сферы изучения английского языка)"""
     
     await query.message.reply_text(prompts_text)
     
-    # Отправляем файл с промптами
-    # Замените 'Промпты.pdf' на путь к вашему файлу
+    # Отправляем PDF файл
     try:
         await query.message.reply_document(
-            document='Промпты.pdf',
+            document='PROMT.pdf',
             caption='📄 Лучшие промпты для изучения английского с ИИ'
         )
     except Exception as e:
@@ -222,9 +220,6 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main() -> None:
     """Запуск бота"""
-    # Замените 'YOUR_BOT_TOKEN' на токен вашего бота от @BotFather
-    TOKEN = os.getenv('BOT_TOKEN', 'YOUR_BOT_TOKEN')
-    
     # Создание приложения
     application = Application.builder().token(TOKEN).build()
     
